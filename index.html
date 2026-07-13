@@ -37,6 +37,7 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
+        <script src="data/EstadodeSoPaulo_0.js"></script>
         <script src="data/Capital_2.js"></script>
         <script src="data/BairrosCitados_3.js"></script>
         <script src="data/LoteamentosIrregulares_5.js"></script>
@@ -50,7 +51,7 @@
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-23.70584674611365,-46.86617306459024],[-23.612049730461273,-46.68862198989073]]);
+        }).fitBounds([[-24.358069290122536,-47.9991449956396],[-22.127615953675853,-43.74443561645818]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -121,19 +122,54 @@
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
-        map.createPane('pane_Mapa_0');
-        map.getPane('pane_Mapa_0').style.zIndex = 400;
-        var layer_Mapa_0 = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-            pane: 'pane_Mapa_0',
-            opacity: 1.0,
+        function pop_EstadodeSoPaulo_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GID_RA0'] !== null ? autolinker.link(String(feature.properties['GID_RA0']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RA1'] !== null ? autolinker.link(String(feature.properties['RA1']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_EstadodeSoPaulo_0_0() {
+            return {
+                pane: 'pane_EstadodeSoPaulo_0',
+                opacity: 1,
+                color: 'rgba(247,247,247,0.25)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(192,192,192,0.25)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_EstadodeSoPaulo_0');
+        map.getPane('pane_EstadodeSoPaulo_0').style.zIndex = 400;
+        map.getPane('pane_EstadodeSoPaulo_0').style['mix-blend-mode'] = 'normal';
+        var layer_EstadodeSoPaulo_0 = new L.geoJson(json_EstadodeSoPaulo_0, {
             attribution: '',
-            minZoom: 1,
-            maxZoom: 28,
-            minNativeZoom: 0,
-            maxNativeZoom: 20
+            interactive: true,
+            dataVar: 'json_EstadodeSoPaulo_0',
+            layerName: 'layer_EstadodeSoPaulo_0',
+            pane: 'pane_EstadodeSoPaulo_0',
+            onEachFeature: pop_EstadodeSoPaulo_0,
+            style: style_EstadodeSoPaulo_0_0,
         });
-        layer_Mapa_0;
-        map.addLayer(layer_Mapa_0);
+        bounds_group.addLayer(layer_EstadodeSoPaulo_0);
+        map.addLayer(layer_EstadodeSoPaulo_0);
         map.createPane('pane_PopulaoNegra_1');
         map.getPane('pane_PopulaoNegra_1').style.zIndex = 401;
         var img_PopulaoNegra_1 = 'data/PopulaoNegra_1.png';
@@ -663,7 +699,7 @@
             {label: '<img src="legend/BairrosCitados_3.png" /> Bairros Citados', layer: layer_BairrosCitados_3},
             {label: '<img src="legend/Capital_2.png" /> Capital', layer: layer_Capital_2},
             {label: "População Negra ", layer: layer_PopulaoNegra_1},
-            {label: "Mapa", layer: layer_Mapa_0},]
+            {label: '<img src="legend/EstadodeSoPaulo_0.png" /> Estado de São Paulo', layer: layer_EstadodeSoPaulo_0},]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
             //selectorBack: false,
